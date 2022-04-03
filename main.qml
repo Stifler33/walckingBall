@@ -12,10 +12,15 @@ Window {
     Rectangle{
         id: scene
         anchors.fill: parent
-        state: "leftState"
+        state: "initialState"
         ComboBox{
             id: effects
             width: 100
+            Text{
+                id: textBox
+                text: "effects"
+            }
+
             model: ["InQuad", "OutQuad", "InOutQuad", "OutCubic", "OutInCubic", "InOutQuart"]
         }
 
@@ -36,9 +41,14 @@ Window {
             }
             MouseArea{
                 anchors.fill: parent
-                onClicked: ball.x += 30//scene.state = "leftState"
-            }
+                onClicked: if(ball.x >= rightRectangle.x){
+                               scene.state = "initialState"
+                           }else {
+                               scene.state = "otherState"
+                               ball.x += 30
+                           }
         }
+ }
         Rectangle{
             id: rightRectangle
             width: 100
@@ -56,7 +66,7 @@ Window {
             }
             MouseArea{
                 anchors.fill: parent
-                onClicked: ball.x += 30//scene.state = "rightState"
+                onClicked: scene.state = "initialState"
             }
         }
         Rectangle{
@@ -70,38 +80,29 @@ Window {
         }
         states: [
             State{
-                name: "leftState"
+                name: "initialState"
                 PropertyChanges{
                     target: ball
                     x: leftRectangle.x + 5
                 }
             },
             State{
-                name: "rightState"
+                name: "otherState"
                 PropertyChanges{
                     target: ball
-                    x: rightRectangle.x + 5
+                    x: ball.x
                 }
             }
         ]
         transitions:[
             Transition{
-                from: "leftState"
-                to : "rightState"
+                from: "otherState"
+                to : "initialState"
                 NumberAnimation{
                     properties: "x,y"
-                    duration: 1000
+                    duration: 700
                     easing.type: effects.currentText
 
-                }
-            },
-            Transition{
-                from: "rightState"
-                to : "leftState"
-                NumberAnimation{
-                    properties: "x,y"
-                    duration: 1000
-                    easing.type: effects.currentText
                 }
             }
 
